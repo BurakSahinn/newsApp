@@ -22,7 +22,9 @@ class HomeScreen extends StatelessWidget {
             child: Scaffold(
               appBar: appBar(),
               bottomNavigationBar: bottomNavigationBar(),
-              body: body(),
+              body: homeController.newsLoadingStatue.value == false
+                  ? body()
+                  : const CircularProgressIndicator(),
             ),
           );
         },
@@ -34,7 +36,6 @@ class HomeScreen extends StatelessWidget {
     return TabBarView(
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        
         NewsListScreen(),
 
         // SECOND PAGE
