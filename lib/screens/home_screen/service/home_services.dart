@@ -30,4 +30,5 @@ class HomeServices {
       return newsModel;
     }
   }
+  
 }

@@ -24,7 +24,9 @@ class HomeScreen extends StatelessWidget {
               bottomNavigationBar: bottomNavigationBar(),
               body: homeController.newsLoadingStatue.value == false
                   ? body()
-                  : const CircularProgressIndicator(),
+                  : const Center(
+                      child: CircularProgressIndicator(),
+                    ),
             ),
           );
         },
