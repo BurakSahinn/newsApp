@@ -6,6 +6,7 @@ import 'package:news_app/screens/home_screen/controller/home_controller.dart';
 import 'package:news_app/utilities/app_colors.dart';
 import 'package:news_app/utilities/app_radius.dart';
 import 'package:news_app/utilities/app_text_styles.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sizer/sizer.dart';
 
 class NewsListScreen extends StatelessWidget {
@@ -29,25 +30,45 @@ class NewsListScreen extends StatelessWidget {
     );
   }
 
-  SizedBox newsList() {
-    return SizedBox(
-        height: 66.h,
-        width: Get.width,
-        child: Obx(
-          () {
-            return homeController.newsLoadingStatue.value == true
-                ? const CircularProgressIndicator()
-                : ListView.separated(
-                    separatorBuilder: (context, index) {
-                      return SizedBox(height: 2.h);
-                    },
-                    itemCount: homeController.newsModel!.articles!.length,
-                    itemBuilder: (context, index) {
-                      return newsCard(index);
-                    },
-                  );
-          },
-        ));
+  Obx newsList() {
+    return Obx(
+      () {
+        return SizedBox(
+          height: 66.h,
+          width: Get.width,
+          child: SmartRefresher(
+            controller: homeController.refreshController.value,
+            enablePullUp: true,
+            onRefresh: () async {
+              final result =
+                  await homeController.getNewsListwithSearch(isRefresh: true);
+              if (result) {
+                homeController.refreshController.value.refreshCompleted();
+              } else {
+                homeController.refreshController.value.refreshFailed();
+              }
+            },
+            onLoading: () async {
+              final result = await homeController.getNewsListwithSearch();
+              if (result) {
+                homeController.refreshController.value.loadComplete();
+              } else {
+                homeController.refreshController.value.loadFailed();
+              }
+            },
+            child: ListView.separated(
+              separatorBuilder: (context, index) {
+                return SizedBox(height: 2.h);
+              },
+              itemCount: homeController.newsList.length,
+              itemBuilder: (context, index) {
+                return newsCard(index);
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 
   GestureDetector newsCard(index) {
@@ -79,7 +100,7 @@ class NewsListScreen extends StatelessWidget {
       height: 18.h,
       width: 30.w,
       child: Image.network(
-        homeController.newsModel!.articles![index].urlToImage!,
+        homeController.newsList[index].urlToImage!,
       ),
     );
   }
@@ -91,24 +112,24 @@ class NewsListScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            homeController.newsModel!.articles![index].title!,
+            homeController.newsList[index].title!,
             overflow: TextOverflow.ellipsis,
             style: AppTextStyles.boldTextStyle,
           ),
           SizedBox(height: 3.h),
           Text(
-            homeController.newsModel!.articles![index].description!,
+            homeController.newsList[index].description!,
             overflow: TextOverflow.ellipsis,
             maxLines: 3,
           ),
           SizedBox(height: 2.h),
           Text(
-            homeController.newsModel!.articles![index].source!.name!,
+            homeController.newsList[index].source!.name!,
           ),
           SizedBox(height: 1.h),
           Text(
             DateFormat('dd/MM/yyyy').format(
-              homeController.newsModel!.articles![index].publishedAt!,
+              homeController.newsList[index].publishedAt!,
             ),
           ),
         ],
@@ -135,7 +156,7 @@ class NewsListScreen extends StatelessWidget {
           border: InputBorder.none,
           suffixIcon: IconButton(
             onPressed: () {
-              homeController.getNewsListwithSearch();
+              homeController.checkTextFieldEmpty();
             },
             icon: Icon(
               Icons.search,

@@ -64,7 +64,7 @@ class DetailScreen extends StatelessWidget {
         onPressed: () {
           Get.toNamed(
             AppPaths.pathOfNewsSourceScreen,
-            arguments: homeController.newsModel!.articles![newsId].url,
+            arguments: homeController.newsList[newsId].url,
           );
         },
         style: ElevatedButton.styleFrom(
@@ -84,7 +84,7 @@ class DetailScreen extends StatelessWidget {
 
   Text newsDescription() {
     return Text(
-      homeController.newsModel!.articles![newsId].description!,
+      homeController.newsList[newsId].description!,
     );
   }
 
@@ -98,7 +98,7 @@ class DetailScreen extends StatelessWidget {
         SizedBox(width: 2.w),
         Text(
           DateFormat('dd/MM/yyyy').format(
-            homeController.newsModel!.articles![newsId].publishedAt!,
+            homeController.newsList[newsId].publishedAt!,
           ),
         ),
       ],
@@ -114,7 +114,7 @@ class DetailScreen extends StatelessWidget {
         ),
         SizedBox(width: 2.w),
         Text(
-          homeController.newsModel!.articles![newsId].source!.name!,
+          homeController.newsList[newsId].source!.name!,
         ),
       ],
     );
@@ -122,7 +122,7 @@ class DetailScreen extends StatelessWidget {
 
   Text newsTitle() {
     return Text(
-      homeController.newsModel!.articles![newsId].title!,
+      homeController.newsList[newsId].title!,
       style: AppTextStyles.semiBoldTextStyle,
     );
   }
@@ -132,7 +132,7 @@ class DetailScreen extends StatelessWidget {
       height: 35.h,
       width: Get.width,
       child: Image.network(
-        homeController.newsModel!.articles![newsId].urlToImage!,
+        homeController.newsList[newsId].urlToImage!,
         fit: BoxFit.fill,
       ),
     );

@@ -9,8 +9,8 @@ class DetailController extends GetxController {
 
   Future<void> shareNews() async {
     await FlutterShare.share(
-      title: homeController.newsModel!.articles![newsId].title!,
-      linkUrl: homeController.newsModel!.articles![newsId].url,
+      title: homeController.newsList[newsId].title!,
+      linkUrl: homeController.newsList[newsId].url,
     );
   }
 }

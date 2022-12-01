@@ -22,11 +22,7 @@ class HomeScreen extends StatelessWidget {
             child: Scaffold(
               appBar: appBar(),
               bottomNavigationBar: bottomNavigationBar(),
-              body: homeController.newsLoadingStatue.value == false
-                  ? body()
-                  : const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+              body: body(),
             ),
           );
         },
@@ -39,12 +35,7 @@ class HomeScreen extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       children: [
         NewsListScreen(),
-
-        // SECOND PAGE
-        GestureDetector(
-          onTap: () {},
-          child: const Text("test1"),
-        ),
+        const SizedBox(),
       ],
     );
   }

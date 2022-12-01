@@ -6,6 +6,7 @@ import 'package:news_app/models/news_model/news_article_model.dart';
 import 'package:news_app/models/news_model/news_model.dart';
 import 'package:news_app/screens/home_screen/service/home_services.dart';
 import 'package:news_app/utilities/app_text_styles.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HomeController extends GetxController {
   HomeServices homeServices = HomeServices();
@@ -19,19 +20,27 @@ class HomeController extends GetxController {
 
   RxInt currentPage = 1.obs;
 
-  List<NewsArticleModel> newsList = [];
+  RxList<NewsArticleModel> newsList = <NewsArticleModel>[].obs;
+
+  final Rx<RefreshController> refreshController =
+      RefreshController(initialRefresh: true).obs;
 
   checkTextFieldEmpty() {
     if (seachFieldController.text == '') {
       errorDialog('Search bar is empty!');
     } else {
-      getNewsListwithSearch();
+      newsList = <NewsArticleModel>[].obs;
+      getNewsListwithSearch(isRefresh: true);
     }
   }
 
-  getNewsListwithSearch() async {
+  getNewsListwithSearch({bool isRefresh = false}) async {
     try {
       changeLoadingStatue(newsLoadingStatue);
+
+      if (isRefresh) {
+        currentPage.value = 1;
+      }
 
       newsModel = await homeServices.getNewsFromService(seachFieldController
                   .text ==
@@ -39,8 +48,13 @@ class HomeController extends GetxController {
           ? "${BaseUrls.topNewsUrl}&page=$currentPage&pageSize=10"
           : "${BaseUrls.baseUrl}everything?q=${seachFieldController.text}&apiKey=${GeneralData.apiKey}&page=$currentPage&pageSize=10");
 
-      newsList = newsModel!.articles!;
-      currentPage.value++;
+      if (newsModel!.status == "ok") {
+        newsList.addAll(newsModel!.articles!);
+        currentPage.value++;
+        return true;
+      } else {
+        return false;
+      }
     } finally {
       changeLoadingStatue(newsLoadingStatue);
     }
@@ -72,11 +86,5 @@ class HomeController extends GetxController {
             ),
           )
         ]);
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-    getNewsListwithSearch();
   }
 }
