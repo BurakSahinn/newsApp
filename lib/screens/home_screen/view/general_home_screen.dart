@@ -34,14 +34,8 @@ class HomeScreen extends StatelessWidget {
     return TabBarView(
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        
         NewsListScreen(),
-
-        // SECOND PAGE
-        GestureDetector(
-          onTap: () {},
-          child: const Text("test1"),
-        ),
+        const SizedBox(),
       ],
     );
   }
